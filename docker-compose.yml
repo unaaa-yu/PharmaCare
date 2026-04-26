@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pharmcare
+      POSTGRES_USER: pharmcare
+      POSTGRES_PASSWORD: pharmcare
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pharmcare"]
+      interval: 5s
+      retries: 5
+    networks:
+      - pharmnet
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://pharmcare:pharmcare@db:5432/pharmcare
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pharmnet
+
+networks:
+  pharmnet:

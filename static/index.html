@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PharmaCare AI — Care Plan Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f4f6f9; color: #1a1a2e; }
+
+    header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 18px 32px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .container { max-width: 760px; margin: 40px auto; padding: 0 16px; }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 { font-size: 1.1rem; color: #444; margin-bottom: 24px; font-weight: 500; }
+
+    label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px; }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #dde1e8;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { outline: none; border-color: #4a90d9; }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      background: #1a1a2e;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #2d2d4e; }
+    button:disabled { background: #999; cursor: not-allowed; }
+
+    #status { text-align: center; color: #666; margin: 16px 0; font-size: 0.9rem; display: none; }
+
+    #result {
+      margin-top: 32px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      display: none;
+    }
+    #result h3 { font-size: 1rem; color: #1a1a2e; margin-bottom: 16px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+    #plan-text { white-space: pre-wrap; font-size: 0.9rem; line-height: 1.7; color: #333; }
+  </style>
+</head>
+<body>
+
+<header>PharmaCare AI</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Patient Care Plan Generator</h2>
+    <form id="form">
+      <div class="row">
+        <div>
+          <label>Patient Name</label>
+          <input type="text" name="patient_name" placeholder="e.g. John Smith" required>
+        </div>
+        <div>
+          <label>Age</label>
+          <input type="number" name="age" placeholder="e.g. 65" required>
+        </div>
+      </div>
+
+      <label>Diagnoses / Conditions</label>
+      <textarea name="conditions" placeholder="e.g. Type 2 diabetes, hypertension, CKD stage 3" required></textarea>
+
+      <label>Current Medications</label>
+      <textarea name="medications" placeholder="e.g. Metformin 1000mg BID, Lisinopril 10mg QD, Atorvastatin 40mg QHS" required></textarea>
+
+      <label>Patient Goals</label>
+      <textarea name="goals" placeholder="e.g. Better blood sugar control, reduce pill burden, improve energy levels" required></textarea>
+
+      <button type="submit" id="submit-btn">Generate Care Plan</button>
+    </form>
+  </div>
+
+  <p id="status">⏳ Generating care plan with AI — this may take 15–30 seconds…</p>
+
+  <div id="result">
+    <h3>AI-Generated Care Plan</h3>
+    <div id="plan-text"></div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+    const planText = document.getElementById("plan-text");
+
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
+    payload.age = parseInt(payload.age);
+
+    btn.disabled = true;
+    btn.textContent = "Generating…";
+    status.style.display = "block";
+    result.style.display = "none";
+
+    const res = await fetch("/generate/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    status.style.display = "none";
+    btn.disabled = false;
+    btn.textContent = "Generate Care Plan";
+
+    planText.textContent = data.plan;
+    result.style.display = "block";
+    result.scrollIntoView({ behavior: "smooth" });
+  });
+</script>
+
+</body>
+</html>
