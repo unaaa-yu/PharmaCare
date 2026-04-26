@@ -16,18 +16,31 @@
       letter-spacing: 0.5px;
     }
 
-    .container { max-width: 760px; margin: 40px auto; padding: 0 16px; }
+    .container { max-width: 800px; margin: 40px auto; padding: 0 16px; }
 
     .card {
       background: #fff;
       border-radius: 10px;
       padding: 32px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #4a90d9;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eef0f5;
     }
 
     h2 { font-size: 1.1rem; color: #444; margin-bottom: 24px; font-weight: 500; }
 
     label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .hint { font-size: 0.75rem; color: #999; font-weight: 400; margin-left: 4px; }
 
     input, textarea {
       width: 100%;
@@ -37,13 +50,67 @@
       font-size: 0.95rem;
       margin-bottom: 18px;
       transition: border-color 0.2s;
+      font-family: inherit;
     }
     input:focus, textarea:focus { outline: none; border-color: #4a90d9; }
     textarea { resize: vertical; min-height: 80px; }
 
-    .row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-    button {
+    .list-field { margin-bottom: 18px; }
+    .list-items { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+    .list-item { display: flex; gap: 8px; align-items: center; }
+    .list-item input { margin-bottom: 0; flex: 1; }
+    .remove-btn {
+      background: none;
+      border: 1px solid #dde1e8;
+      border-radius: 6px;
+      color: #999;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 1rem;
+      line-height: 1;
+      width: auto;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .remove-btn:hover { border-color: #e74c3c; color: #e74c3c; background: #fff5f5; }
+    .add-btn {
+      background: none;
+      border: 1px dashed #4a90d9;
+      border-radius: 6px;
+      color: #4a90d9;
+      cursor: pointer;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      width: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .add-btn:hover { background: #f0f7ff; }
+
+    .toggle-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .toggle-btn {
+      padding: 7px 16px;
+      border: 1px solid #dde1e8;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #fff;
+      color: #888;
+      width: auto;
+      transition: all 0.2s;
+    }
+    .toggle-btn.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+
+    .records-panel { display: none; }
+    .records-panel.active { display: block; }
+
+    .submit-btn {
       width: 100%;
       padding: 13px;
       background: #1a1a2e;
@@ -55,13 +122,12 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-    button:hover { background: #2d2d4e; }
-    button:disabled { background: #999; cursor: not-allowed; }
+    .submit-btn:hover { background: #2d2d4e; }
+    .submit-btn:disabled { background: #999; cursor: not-allowed; }
 
     #status { text-align: center; color: #666; margin: 16px 0; font-size: 0.9rem; display: none; }
 
     #result {
-      margin-top: 32px;
       background: #fff;
       border-radius: 10px;
       padding: 32px;
@@ -79,32 +145,77 @@
 <div class="container">
   <div class="card">
     <h2>Patient Care Plan Generator</h2>
-    <form id="form">
+    <form id="form" enctype="multipart/form-data">
+
+      <div class="section-title">Patient Information</div>
       <div class="row">
         <div>
-          <label>Patient Name</label>
-          <input type="text" name="patient_name" placeholder="e.g. John Smith" required>
+          <label>First Name</label>
+          <input type="text" name="patient_first_name" placeholder="e.g. Jane" required>
         </div>
         <div>
-          <label>Age</label>
-          <input type="number" name="age" placeholder="e.g. 65" required>
+          <label>Last Name</label>
+          <input type="text" name="patient_last_name" placeholder="e.g. Smith" required>
+        </div>
+      </div>
+      <div>
+        <label>Patient MRN <span class="hint">6-digit unique ID</span></label>
+        <input type="text" name="patient_mrn" placeholder="e.g. 482910" pattern="\d{6}" maxlength="6" required>
+      </div>
+
+      <div class="section-title">Referring Provider</div>
+      <div class="row">
+        <div>
+          <label>Provider Name</label>
+          <input type="text" name="referring_provider" placeholder="e.g. Dr. Michael Lee" required>
+        </div>
+        <div>
+          <label>CPSO Number <span class="hint">6-digit number</span></label>
+          <input type="text" name="referring_provider_npi" placeholder="e.g. 123456" pattern="\d{6}" maxlength="6" required>
         </div>
       </div>
 
-      <label>Diagnoses / Conditions</label>
-      <textarea name="conditions" placeholder="e.g. Type 2 diabetes, hypertension, CKD stage 3" required></textarea>
+      <div class="section-title">Diagnoses</div>
+      <div>
+        <label>Primary Diagnosis <span class="hint">ICD-10 code</span></label>
+        <input type="text" name="primary_diagnosis" placeholder="e.g. E11.9" required>
+      </div>
 
-      <label>Current Medications</label>
-      <textarea name="medications" placeholder="e.g. Metformin 1000mg BID, Lisinopril 10mg QD, Atorvastatin 40mg QHS" required></textarea>
+      <div class="list-field">
+        <label>Additional Diagnoses <span class="hint">ICD-10 codes</span></label>
+        <div class="list-items" id="additional-diagnoses-list"></div>
+        <button type="button" class="add-btn" onclick="addItem('additional-diagnoses-list', 'additional_diagnoses[]', 'e.g. I10')">+ Add Diagnosis</button>
+      </div>
 
-      <label>Patient Goals</label>
-      <textarea name="goals" placeholder="e.g. Better blood sugar control, reduce pill burden, improve energy levels" required></textarea>
+      <div class="section-title">Medications</div>
+      <div>
+        <label>Medication Name</label>
+        <input type="text" name="medication_name" placeholder="e.g. Metformin 1000mg BID" required>
+      </div>
 
-      <button type="submit" id="submit-btn">Generate Care Plan</button>
+      <div class="list-field">
+        <label>Medication History</label>
+        <div class="list-items" id="medication-history-list"></div>
+        <button type="button" class="add-btn" onclick="addItem('medication-history-list', 'medication_history[]', 'e.g. Lisinopril 10mg QD (discontinued 2023)')">+ Add Medication</button>
+      </div>
+
+      <div class="section-title">Patient Records</div>
+      <div class="toggle-row">
+        <button type="button" class="toggle-btn active" onclick="switchRecords('text', this)">Text / Notes</button>
+        <button type="button" class="toggle-btn" onclick="switchRecords('file', this)">Upload PDF</button>
+      </div>
+      <div class="records-panel active" id="records-text">
+        <textarea name="patient_records_text" placeholder="Paste relevant clinical notes, lab results, or history…"></textarea>
+      </div>
+      <div class="records-panel" id="records-file">
+        <input type="file" name="patient_records_file" accept=".pdf">
+      </div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Generate Care Plan</button>
     </form>
   </div>
 
-  <p id="status">⏳ Generating care plan with AI — this may take 15–30 seconds…</p>
+  <p id="status">Generating care plan with AI — this may take 15–30 seconds…</p>
 
   <div id="result">
     <h3>AI-Generated Care Plan</h3>
@@ -113,6 +224,25 @@
 </div>
 
 <script>
+  function addItem(listId, inputName, placeholder) {
+    const list = document.getElementById(listId);
+    const item = document.createElement("div");
+    item.className = "list-item";
+    item.innerHTML = `
+      <input type="text" name="${inputName}" placeholder="${placeholder}">
+      <button type="button" class="remove-btn" onclick="this.parentElement.remove()">✕</button>
+    `;
+    list.appendChild(item);
+    item.querySelector("input").focus();
+  }
+
+  function switchRecords(mode, btn) {
+    document.querySelectorAll(".toggle-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".records-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("records-" + mode).classList.add("active");
+  }
+
   document.getElementById("form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("submit-btn");
@@ -121,20 +251,19 @@
     const planText = document.getElementById("plan-text");
 
     const fd = new FormData(e.target);
-    const payload = Object.fromEntries(fd.entries());
-    payload.age = parseInt(payload.age);
+
+    ["additional_diagnoses[]", "medication_history[]"].forEach(name => {
+      const values = fd.getAll(name).filter(v => v.trim());
+      fd.delete(name);
+      fd.set(name.replace("[]", ""), values.join("\n"));
+    });
 
     btn.disabled = true;
     btn.textContent = "Generating…";
     status.style.display = "block";
     result.style.display = "none";
 
-    const res = await fetch("/generate/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
+    const res = await fetch("/generate/", { method: "POST", body: fd });
     const data = await res.json();
 
     status.style.display = "none";
