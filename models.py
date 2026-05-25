@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from sqlalchemy import Integer, String, Text, DateTime
 from sqlalchemy.orm import mapped_column, Mapped
 from database import Base
@@ -20,3 +21,6 @@ class CarePlan(Base):
     patient_records: Mapped[str] = mapped_column(Text)
     plan: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    # LLM-as-Judge fields
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    verification_report: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import anthropic
 import pypdf
@@ -10,9 +11,16 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from database import Base, engine, get_db
+from judge import run_judge
 from models import CarePlan
+from ml.ddi_scorer import DDIScorer
+from ml.risk_score import PatientRiskScorer
 
 from contextlib import asynccontextmanager
+
+ddi_scorer = DDIScorer()
+risk_scorer = PatientRiskScorer()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -60,6 +68,17 @@ async def generate(
     medication_history_list = [
         m.strip() for m in medication_history.splitlines() if m.strip()
     ]
+
+    # ── ML scoring ──────────────────────────────────────────────────────────
+    all_medications = [medication_name] + medication_history_list
+
+    ddi_results = ddi_scorer.score(all_medications)
+    risk_result = risk_scorer.score(
+        primary_diagnosis=primary_diagnosis,
+        additional_diagnoses=additional_diagnoses_list,
+        medications=all_medications,
+        has_records=bool(patient_records),
+    )
 
     prompt = f"""You are a clinical pharmacist generating a medication care plan. Your most important task is transparency: every clinical statement must carry a source tag so the reviewing pharmacist knows exactly where each piece of information came from.
 
@@ -115,11 +134,49 @@ Generate a structured care plan with the following six sections. Each bullet poi
         medication_history=medication_history,
         patient_records=patient_records,
         plan=plan_text,
+        status="pending",
     )
     db.add(record)
     db.commit()
+    db.refresh(record)
 
-    return {"id": record.id, "plan": plan_text}
+    # Auto-trigger LLM-as-Judge
+    try:
+        report = run_judge(record, client)
+        record.verification_report = json.dumps(report.to_dict())
+        record.status = "needs_review" if report.has_hallucination else "verified"
+        db.commit()
+    except Exception as e:
+        record.status = "judge_error"
+        record.verification_report = json.dumps({"error": str(e)})
+        db.commit()
+
+    report_data = json.loads(record.verification_report) if record.verification_report else {}
+    return {
+        "id": record.id,
+        "plan": plan_text,
+        "verification": {
+            "status": record.status,
+            "metrics": report_data.get("metrics"),
+            "claims": report_data.get("claims", []),
+        },
+        "risk": {
+            "tier": risk_result.tier,
+            "score": risk_result.score,
+            "factors": risk_result.factors,
+            "color": risk_result.color,
+        },
+        "drug_interactions": [
+            {
+                "drug_a": r.drug_a,
+                "drug_b": r.drug_b,
+                "risk": r.risk,
+                "mechanism": r.mechanism,
+                "confidence": r.confidence,
+            }
+            for r in ddi_results
+        ],
+    }
 
 
 handler = Mangum(app)

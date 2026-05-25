@@ -386,6 +386,172 @@
       white-space: pre-wrap;
     }
 
+    /* ── Verification ── */
+    .verify-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    .verify-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+    .verify-header.ok     { background: #f0fdf4; color: #15803d; }
+    .verify-header.warn   { background: #fff7ed; color: #c2410c; }
+    .verify-header.pending{ background: var(--bg); color: var(--text-muted); }
+    .verify-metrics {
+      display: flex;
+      gap: 20px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+    .verify-body { display: none; border-top: 1px solid var(--border); }
+    .verify-body.open { display: block; }
+    .verify-claims { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .claim {
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+    .claim.VERIFIED     { background: #f0fdf4; border-left: 3px solid #22c55e; }
+    .claim.UNVERIFIED   { background: #f8fafc; border-left: 3px solid #94a3b8; }
+    .claim.HALLUCINATION{ background: #fff5f5; border-left: 3px solid #ef4444; }
+    .claim-verdict {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+    .claim.VERIFIED .claim-verdict     { color: #16a34a; }
+    .claim.UNVERIFIED .claim-verdict   { color: #64748b; }
+    .claim.HALLUCINATION .claim-verdict{ color: #dc2626; }
+    .claim-reason { color: var(--text-muted); font-size: 0.78rem; margin-top: 2px; }
+
+    /* ── Risk score ── */
+    .risk-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    .risk-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+    }
+    .risk-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    .risk-score-pct {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .risk-factors {
+      padding: 0 16px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .risk-factor-chip {
+      font-size: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+      color: var(--text-muted);
+    }
+
+    /* ── DDI panel ── */
+    .ddi-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    .ddi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      background: #fffbeb;
+      color: #92400e;
+    }
+    .ddi-header.safe {
+      background: #f0fdf4;
+      color: #15803d;
+      cursor: default;
+    }
+    .ddi-count {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: inherit;
+      opacity: 0.8;
+    }
+    .ddi-body { display: none; border-top: 1px solid var(--border); }
+    .ddi-body.open { display: block; }
+    .ddi-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .ddi-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    .ddi-item.HIGH     { background: #fff5f5; border-left: 3px solid #ef4444; }
+    .ddi-item.MODERATE { background: #fffbeb; border-left: 3px solid #f59e0b; }
+    .ddi-item.LOW      { background: #f8fafc; border-left: 3px solid #94a3b8; }
+    .ddi-pair {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ddi-risk-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .ddi-item.HIGH     .ddi-risk-label { background: #fee2e2; color: #dc2626; }
+    .ddi-item.MODERATE .ddi-risk-label { background: #fef3c7; color: #d97706; }
+    .ddi-item.LOW      .ddi-risk-label { background: #f1f5f9; color: #64748b; }
+    .ddi-mechanism { color: var(--text-muted); font-size: 0.78rem; }
+    .ddi-confidence { color: var(--text-light); font-size: 0.72rem; margin-top: 2px; }
+
     /* ── Error ── */
     .error-card {
       background: #fff5f5;
@@ -567,6 +733,40 @@
         </button>
       </div>
       <div id="plan-content"></div>
+
+      <!-- Risk score -->
+      <div class="risk-card" id="risk-card" style="display:none">
+        <div class="risk-header" id="risk-header">
+          <div class="risk-title">
+            <span>🩺 Patient Risk</span>
+            <span class="risk-badge" id="risk-badge"></span>
+          </div>
+          <span class="risk-score-pct" id="risk-score-pct"></span>
+        </div>
+        <div class="risk-factors" id="risk-factors"></div>
+      </div>
+
+      <!-- DDI warnings -->
+      <div class="ddi-card" id="ddi-card" style="display:none">
+        <div class="ddi-header safe" id="ddi-header" onclick="toggleDdi()">
+          <span id="ddi-title">⚗ Drug Interactions</span>
+          <span class="ddi-count" id="ddi-count"></span>
+        </div>
+        <div class="ddi-body" id="ddi-body">
+          <div class="ddi-list" id="ddi-list"></div>
+        </div>
+      </div>
+
+      <!-- Verification report -->
+      <div class="verify-card" id="verify-card" style="display:none">
+        <div class="verify-header pending" id="verify-header" onclick="toggleVerify()">
+          <span id="verify-title">🔍 Verification</span>
+          <div class="verify-metrics" id="verify-metrics"></div>
+        </div>
+        <div class="verify-body" id="verify-body">
+          <div class="verify-claims" id="verify-claims"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -631,6 +831,106 @@
     container.dataset.raw = text;
   }
 
+  function toggleDdi() {
+    const body = document.getElementById('ddi-body');
+    body.classList.toggle('open');
+  }
+
+  function renderRisk(risk) {
+    const card = document.getElementById('risk-card');
+    const badge = document.getElementById('risk-badge');
+    const pct = document.getElementById('risk-score-pct');
+    const factors = document.getElementById('risk-factors');
+
+    card.style.display = 'block';
+    badge.textContent = risk.tier;
+    badge.style.background = risk.color;
+    pct.textContent = `Model confidence ${Math.round(risk.score * 100)}%`;
+
+    factors.innerHTML = (risk.factors || [])
+      .map(f => `<span class="risk-factor-chip">${f}</span>`)
+      .join('');
+  }
+
+  function renderDDI(interactions) {
+    const card = document.getElementById('ddi-card');
+    const header = document.getElementById('ddi-header');
+    const title = document.getElementById('ddi-title');
+    const count = document.getElementById('ddi-count');
+    const body = document.getElementById('ddi-body');
+    const list = document.getElementById('ddi-list');
+
+    card.style.display = 'block';
+
+    const n = interactions.length;
+    if (n === 0) {
+      header.className = 'ddi-header safe';
+      title.textContent = '✓ No Drug Interactions Detected';
+      count.textContent = '';
+      return;
+    }
+
+    const highCount = interactions.filter(i => i.risk === 'HIGH').length;
+    header.className = 'ddi-header';
+    title.textContent = highCount > 0
+      ? `⚠️ Drug Interaction Warnings`
+      : `⚗ Drug Interactions Detected`;
+    count.textContent = `${n} pair${n !== 1 ? 's' : ''} found`;
+
+    if (highCount > 0) body.classList.add('open');
+
+    list.innerHTML = interactions.map(i => `
+      <div class="ddi-item ${i.risk}">
+        <div class="ddi-pair">
+          <span>${i.drug_a}</span>
+          <span style="color:var(--text-light)">+</span>
+          <span>${i.drug_b}</span>
+          <span class="ddi-risk-label">${i.risk}</span>
+        </div>
+        <div class="ddi-mechanism">${i.mechanism}</div>
+        <div class="ddi-confidence">Match confidence: ${Math.round(i.confidence * 100)}%</div>
+      </div>`).join('');
+  }
+
+  function toggleVerify() {
+    const body = document.getElementById('verify-body');
+    body.classList.toggle('open');
+  }
+
+  function renderVerification(v) {
+    const card = document.getElementById('verify-card');
+    const header = document.getElementById('verify-header');
+    const title = document.getElementById('verify-title');
+    const metricsEl = document.getElementById('verify-metrics');
+    const claimsEl = document.getElementById('verify-claims');
+
+    card.style.display = 'block';
+
+    const isWarn = v.status === 'needs_review';
+    header.className = 'verify-header ' + (isWarn ? 'warn' : 'ok');
+    title.textContent = isWarn ? '⚠️ Needs Review — Hallucination detected' : '✓ Verification Passed';
+
+    const m = v.metrics || {};
+    metricsEl.innerHTML = [
+      `P <strong>${((m.precision||0)*100).toFixed(0)}%</strong>`,
+      `R <strong>${((m.recall||0)*100).toFixed(0)}%</strong>`,
+      `F1 <strong>${((m.f1||0)*100).toFixed(0)}%</strong>`,
+      `✓${m.verified||0} ?${m.unverified||0} ✗${m.hallucination||0}`,
+    ].map(s => `<span>${s}</span>`).join('');
+
+    // Auto-open if there's a hallucination
+    if (isWarn) document.getElementById('verify-body').classList.add('open');
+
+    // Render claims from full report stored in dataset
+    const report = v.claims || [];
+    claimsEl.innerHTML = report.map(c => `
+      <div class="claim ${c.verdict}">
+        <div class="claim-verdict">${c.verdict}</div>
+        <div>${c.text}</div>
+        <div class="claim-reason">${c.reason}</div>
+      </div>`).join('');
+  }
+
   function copyPlan() {
     const text = document.getElementById('plan-content').dataset.raw || '';
     navigator.clipboard.writeText(text).then(() => {
@@ -670,6 +970,9 @@
       const data = await res.json();
 
       renderPlan(data.plan);
+      if (data.risk) renderRisk(data.risk);
+      if (data.drug_interactions) renderDDI(data.drug_interactions);
+      if (data.verification) renderVerification(data.verification);
       resultEl.style.display = 'block';
       resultEl.scrollIntoView({ behavior: 'smooth' });
     } catch (err) {
